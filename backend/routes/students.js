@@ -7,12 +7,12 @@ const { requireAuth } = require('../middleware/auth');
 // GET /api/students/stats  (public)
 router.get('/stats', async (req, res) => {
   try {
-    const total = await Student.countDocuments();
+    const activeCount = await Student.countDocuments();
+    const completed = await ExchangeHistory.countDocuments();
+    const total = activeCount + (completed * 2);
+
     const ramanujan = await Student.countDocuments({ currentHostel: 'Ramanujan Bhawan' });
     const ambedkar = await Student.countDocuments({ currentHostel: 'Ambedkar Bhawan' });
-
-    // Completed exchanges live in ExchangeHistory
-    const completed = await ExchangeHistory.countDocuments();
 
     // Count perfect matches
     const wantAmbedkar = await Student.find({
