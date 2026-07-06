@@ -36,16 +36,20 @@ router.post('/', requireAuth, async (req, res) => {
     // Create history record with a full snapshot
     const record = new ExchangeHistory({
       studentA: {
+        uid: studentA.uid,
         name: studentA.name,
         rollNumber: studentA.rollNumber,
         branch: studentA.branch,
         year: studentA.year,
+        contactNumber: studentA.contactNumber || '',
       },
       studentB: {
+        uid: studentB.uid,
         name: studentB.name,
         rollNumber: studentB.rollNumber,
         branch: studentB.branch,
         year: studentB.year,
+        contactNumber: studentB.contactNumber || '',
       },
       oldHostelA: studentA.currentHostel,
       oldHostelB: studentB.currentHostel,

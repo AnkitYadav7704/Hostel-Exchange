@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { History, Loader2, ArrowLeftRight, Calendar, Building, User, Hash } from 'lucide-react';
+import { History, Loader2, ArrowLeftRight, Calendar, Building, User, Hash, Phone } from 'lucide-react';
 import { getHistory } from '../api/api';
 import toast from 'react-hot-toast';
 
@@ -85,7 +85,15 @@ export default function ExchangeHistory() {
                         <span className="text-white/20">·</span>
                         <span className="text-white/40 text-xs">{record.studentA.year}</span>
                       </div>
-                      <HostelPill hostel={record.oldHostelA} />
+                      <div className="flex flex-wrap items-center gap-2">
+                        <HostelPill hostel={record.oldHostelA} />
+                        {record.studentA.contactNumber && (
+                          <span className="inline-flex items-center gap-1 bg-white/5 border border-white/5 text-white/40 text-[10px] px-2 py-0.5 rounded-full font-medium">
+                            <Phone size={8} />
+                            {record.studentA.contactNumber}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -113,7 +121,15 @@ export default function ExchangeHistory() {
                         <span className="text-white/20">·</span>
                         <span className="text-white/40 text-xs">{record.studentB.year}</span>
                       </div>
-                      <HostelPill hostel={record.oldHostelB} />
+                      <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+                        <HostelPill hostel={record.oldHostelB} />
+                        {record.studentB.contactNumber && (
+                          <span className="inline-flex items-center gap-1 bg-white/5 border border-white/5 text-white/40 text-[10px] px-2 py-0.5 rounded-full font-medium">
+                            <Phone size={8} />
+                            {record.studentB.contactNumber}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

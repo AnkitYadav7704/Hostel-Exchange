@@ -60,10 +60,9 @@ export default function Navbar() {
                 to={to}
                 end={to === '/'}
                 className={({ isActive }) =>
-                  `px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                      : 'text-white/60 hover:text-white hover:bg-white/5'
+                  `px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
+                    ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
                   }`
                 }
               >
@@ -164,10 +163,9 @@ export default function Navbar() {
                 end={to === '/'}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
-                  `block px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                      : 'text-white/60 hover:text-white hover:bg-white/5'
+                  `block px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
+                    ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
                   }`
                 }
               >

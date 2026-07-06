@@ -23,9 +23,7 @@ export const updateStudentStatus = (id, status) =>
   api.patch(`/students/${id}/status`, { status });
 export const deleteStudent = (id) => api.delete(`/students/${id}`);
 export const getStats = () => api.get('/students/stats');
-
-// ── Matches ───────────────────────────────────────────────
-export const getMatches = () => api.get('/matches');
+export const getMe = () => api.get('/students/me');
 
 // ── History ───────────────────────────────────────────────
 export const getHistory = () => api.get('/history');

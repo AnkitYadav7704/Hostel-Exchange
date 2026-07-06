@@ -3,16 +3,20 @@ const mongoose = require('mongoose');
 const exchangeHistorySchema = new mongoose.Schema(
   {
     studentA: {
+      uid: String,
       name: String,
       rollNumber: String,
       branch: String,
       year: String,
+      contactNumber: String,
     },
     studentB: {
+      uid: String,
       name: String,
       rollNumber: String,
       branch: String,
       year: String,
+      contactNumber: String,
     },
     oldHostelA: {
       type: String,

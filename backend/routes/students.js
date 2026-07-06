@@ -31,6 +31,54 @@ router.get('/stats', async (req, res) => {
   }
 });
 
+// GET /api/students/me  (auth required — get user's profile and match details)
+router.get('/me', requireAuth, async (req, res) => {
+  try {
+    const student = await Student.findOne({ uid: req.user.uid });
+    if (!student) {
+      const completedExchange = await ExchangeHistory.findOne({
+        $or: [
+          { 'studentA.uid': req.user.uid },
+          { 'studentB.uid': req.user.uid }
+        ]
+      }).sort({ createdAt: -1 });
+
+      return res.json({ student: null, partner: null, completedExchange });
+    }
+
+    // Compute matches to find the partner
+    const groupA = await Student.find({
+      currentHostel: 'Ramanujan Bhawan',
+      desiredHostel: 'Ambedkar Bhawan',
+      status: 'Looking for Exchange',
+    }).sort({ createdAt: 1 });
+
+    const groupB = await Student.find({
+      currentHostel: 'Ambedkar Bhawan',
+      desiredHostel: 'Ramanujan Bhawan',
+      status: 'Looking for Exchange',
+    }).sort({ createdAt: 1 });
+
+    const matchCount = Math.min(groupA.length, groupB.length);
+    let partner = null;
+
+    for (let i = 0; i < matchCount; i++) {
+      if (groupA[i]._id.equals(student._id)) {
+        partner = groupB[i];
+        break;
+      }
+      if (groupB[i]._id.equals(student._id)) {
+        partner = groupA[i];
+        break;
+      }
+    }
+
+    res.json({ student, partner });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // GET /api/students  (public — search & filter)
 router.get('/', async (req, res) => {
   try {
