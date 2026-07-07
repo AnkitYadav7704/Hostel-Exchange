@@ -20,7 +20,6 @@ const studentSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Roll number is required'],
       trim: true,
-      unique: true,
       uppercase: true,
     },
     branch: {
@@ -52,6 +51,38 @@ const studentSchema = new mongoose.Schema(
       type: String,
       enum: ['Looking for Exchange', 'Match Found', 'Exchange Completed'],
       default: 'Looking for Exchange',
+    },
+    listingType: {
+      type: String,
+      enum: ['exchange', 'roomPartner'],
+      default: 'exchange',
+      index: true,
+    },
+    preferredHostel: {
+      type: String,
+      enum: ['Ramanujan Bhawan', 'Ambedkar Bhawan', ''],
+      default: '',
+    },
+    roomType: {
+      type: String,
+      enum: ['Single Seater', 'Double Seater', 'Four Seater', '2 Seater', '3 Seater', '4 Seater', ''],
+      default: '',
+    },
+    totalPeopleInRoom: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    vacantSeats: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    additionalPreferences: {
+      type: String,
+      trim: true,
+      maxlength: 200,
+      default: '',
     },
   },
   { timestamps: true }

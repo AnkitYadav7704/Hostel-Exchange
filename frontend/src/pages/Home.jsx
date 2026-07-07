@@ -181,10 +181,11 @@ export default function Home() {
         </div>
 
         {/* Quick Nav Cards */}
-        <div className="grid sm:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: 'All Listings', desc: 'Browse all exchange requests', path: '/listings', color: 'blue', icon: Users },
             { label: 'List Yourself', desc: 'Register your exchange request', path: '/listings', color: 'purple', icon: ArrowLeftRight },
+            { label: 'Find Room Partner', desc: 'Find a room partner in Ramanujan or Ambedkar', path: '/room-partner', color: 'emerald', icon: Search },
             { label: 'History', desc: 'Completed exchange records', path: '/history', color: 'amber', icon: CheckCircle },
           ].map(({ label, desc, path, color, icon: Icon }) => (
             <button

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Search, SlidersHorizontal, Plus, X, Loader2, Users, LogIn, ArrowRight } from 'lucide-react';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { Search, SlidersHorizontal, Plus, X, Loader2, Users, LogIn, ArrowRight, Building2 } from 'lucide-react';
 import { getStudents, createStudent, recordExchange } from '../api/api';
 import { useAuth } from '../contexts/AuthContext';
 import ListingCard from '../components/ListingCard';
@@ -9,16 +9,26 @@ import toast from 'react-hot-toast';
 const BRANCHES = ['CSE', 'IT', 'ECE', 'EE', 'ME', 'CE', 'CH', 'MCA', 'MBA', 'Other'];
 const YEARS = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
 const HOSTELS = ['Ramanujan Bhawan', 'Ambedkar Bhawan'];
+const ROOM_TYPES = ['Single Seater', 'Double Seater', 'Four Seater'];
+const ROOM_CAPACITY = {
+  'Single Seater': 1,
+  'Double Seater': 2,
+  'Four Seater': 4,
+};
 const STATUSES = ['Looking for Exchange', 'Match Found', 'Exchange Completed'];
 
 const defaultForm = {
   name: '', rollNumber: '', branch: '', year: '',
   currentHostel: '', desiredHostel: '', contactNumber: '',
+  listingType: 'exchange', preferredHostel: '', roomType: '',
+  totalPeopleInRoom: '', vacantSeats: '', additionalPreferences: '',
 };
 
 export default function Listings() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isRoomPartnerPage = location.pathname === '/room-partner';
   const { currentUser } = useAuth();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +45,15 @@ export default function Listings() {
     branch: '',
     year: '',
     status: '',
+    listingType: isRoomPartnerPage ? 'roomPartner' : 'exchange',
   });
+
+  useEffect(() => {
+    setFilters((f) => ({
+      ...f,
+      listingType: isRoomPartnerPage ? 'roomPartner' : 'exchange',
+    }));
+  }, [isRoomPartnerPage]);
 
   const fetchStudents = useCallback(async () => {
     setLoading(true);
@@ -58,11 +76,21 @@ export default function Listings() {
   };
 
   const clearFilters = () => {
-    setFilters({ search: '', currentHostel: '', desiredHostel: '', branch: '', year: '', status: '' });
+    setFilters({
+      search: '',
+      currentHostel: '',
+      desiredHostel: '',
+      branch: '',
+      year: '',
+      status: '',
+      listingType: isRoomPartnerPage ? 'roomPartner' : 'exchange',
+    });
     setSearchParams({});
   };
 
-  const activeFilterCount = Object.values(filters).filter(Boolean).length;
+  const activeFilterCount = Object.entries(filters)
+    .filter(([k, v]) => k !== 'listingType' && Boolean(v))
+    .length;
 
   const myListing = currentUser && students.find(s => s.uid === currentUser.uid);
 
@@ -74,7 +102,11 @@ export default function Listings() {
       return;
     }
     setAcceptingTargetStudent(null);
-    setForm(defaultForm);
+    setForm({
+      ...defaultForm,
+      listingType: isRoomPartnerPage ? 'roomPartner' : 'exchange',
+      preferredHostel: isRoomPartnerPage ? 'Ramanujan Bhawan' : '',
+    });
     setShowModal(true);
   };
 
@@ -113,22 +145,67 @@ export default function Listings() {
   // Form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.currentHostel === form.desiredHostel) {
+    if (!isRoomPartnerPage && form.currentHostel === form.desiredHostel) {
       toast.error('Current and desired hostel must be different!');
       return;
     }
+
+    if (isRoomPartnerPage) {
+      const total = Number(form.totalPeopleInRoom);
+      const vacant = Number(form.vacantSeats);
+      const capacity = ROOM_CAPACITY[form.roomType] || 0;
+      if (!Number.isInteger(total) || total <= 0) {
+        toast.error('Total people in room must be a positive integer.');
+        return;
+      }
+      if (!Number.isInteger(vacant) || vacant <= 0) {
+        toast.error('Vacant seats must be a positive integer.');
+        return;
+      }
+      if (capacity === 0) {
+        toast.error('Please select a valid room type.');
+        return;
+      }
+      if (total > capacity) {
+        toast.error(`Total students cannot exceed ${capacity} for ${form.roomType}.`);
+        return;
+      }
+      if (total + vacant > capacity) {
+        toast.error(`Total + vacant seats cannot exceed ${capacity} for ${form.roomType}.`);
+        return;
+      }
+      if (!form.contactNumber.trim()) {
+        toast.error('Mobile number is required for room partner listings.');
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
-      const res = await createStudent(form);
+      const payload = {
+        ...form,
+        listingType: isRoomPartnerPage ? 'roomPartner' : 'exchange',
+      };
+
+      if (isRoomPartnerPage) {
+        payload.currentHostel = form.preferredHostel;
+        payload.desiredHostel = form.preferredHostel;
+      }
+
+      const res = await createStudent(payload);
       if (acceptingTargetStudent) {
         await recordExchange(res.data._id, acceptingTargetStudent._id);
         toast.success(`🎉 Swap successfully completed with ${acceptingTargetStudent.name}! Both moved to History.`);
         setAcceptingTargetStudent(null);
       } else {
-        toast.success('Your listing has been created! 🎉');
+        toast.success(isRoomPartnerPage ? 'Room partner listing created! 🎉' : 'Your listing has been created! 🎉');
       }
       setShowModal(false);
-      setForm(defaultForm);
+      setForm({
+        ...defaultForm,
+        listingType: isRoomPartnerPage ? 'roomPartner' : 'exchange',
+        preferredHostel: isRoomPartnerPage ? 'Ramanujan Bhawan' : '',
+      });
       fetchStudents();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to create listing');
@@ -143,14 +220,16 @@ export default function Listings() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="section-title">Exchange Listings</h1>
+            <h1 className="section-title">{isRoomPartnerPage ? 'Find Room Partner' : 'Exchange Listings'}</h1>
             <p className="section-subtitle">
-              {loading ? 'Loading...' : `${students.length} student${students.length !== 1 ? 's' : ''} looking for exchange`}
+              {loading
+                ? 'Loading...'
+                : `${students.length} student${students.length !== 1 ? 's' : ''} ${isRoomPartnerPage ? 'looking for room partner' : 'looking for exchange'}`}
             </p>
           </div>
           <button onClick={openModal} className="btn-primary flex items-center gap-2 self-start sm:self-auto">
             <Plus size={18} />
-            List Yourself
+            {isRoomPartnerPage ? 'Find Room Partner' : 'List Yourself'}
           </button>
         </div>
 
@@ -266,16 +345,20 @@ export default function Listings() {
             </div>
             <p className="text-white/40 text-lg font-medium mb-2">No listings found</p>
             <p className="text-white/25 text-sm mb-6">
-              {activeFilterCount > 0 ? 'Try adjusting your filters' : 'Be the first to list yourself!'}
+              {activeFilterCount > 0
+                ? 'Try adjusting your filters'
+                : isRoomPartnerPage
+                  ? 'Be the first to find a room partner!'
+                  : 'Be the first to list yourself!'}
             </p>
             {currentUser ? (
               <button onClick={openModal} className="btn-primary">
-                + Create First Listing
+                {isRoomPartnerPage ? '+ Create Room Partner Listing' : '+ Create First Listing'}
               </button>
             ) : (
               <button onClick={() => navigate('/login')} className="btn-primary flex items-center gap-2 mx-auto">
                 <LogIn size={16} />
-                Sign In to List Yourself
+                {isRoomPartnerPage ? 'Sign In to Find Room Partner' : 'Sign In to List Yourself'}
               </button>
             )}
           </div>
@@ -289,6 +372,7 @@ export default function Listings() {
                 onDelete={fetchStudents}
                 onAccept={handleAcceptSwap}
                 myListing={myListing}
+                isRoomPartnerMode={isRoomPartnerPage}
               />
             ))}
           </div>
@@ -307,12 +391,18 @@ export default function Listings() {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-xl font-bold text-white">
-                    {acceptingTargetStudent ? 'Accept Hostel Swap' : 'Create Exchange Listing'}
+                    {acceptingTargetStudent
+                      ? 'Accept Hostel Swap'
+                      : isRoomPartnerPage
+                        ? 'Find Room Partner'
+                        : 'Create Exchange Listing'}
                   </h2>
                   <p className="text-white/40 text-sm mt-1">
                     {acceptingTargetStudent 
                       ? `Complete your details to swap with ${acceptingTargetStudent.name}`
-                      : 'Fill in your details to find an exchange partner'}
+                      : isRoomPartnerPage
+                        ? 'Create a listing to find a compatible room partner in Ramanujan Hostel or Ambedkar Hostel.'
+                        : 'Fill in your details to find an exchange partner'}
                   </p>
                 </div>
                 <button
@@ -381,42 +471,155 @@ export default function Listings() {
                       {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-xs text-white/50 mb-1.5">Current Hostel *</label>
-                    <select
-                      required
-                      disabled={!!acceptingTargetStudent}
-                      value={form.currentHostel}
-                      onChange={(e) => setForm({ ...form, currentHostel: e.target.value })}
-                      className="select-field disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <option value="">Select Hostel</option>
-                      {HOSTELS.map(h => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs text-white/50 mb-1.5">Desired Hostel *</label>
-                    <select
-                      required
-                      disabled={!!acceptingTargetStudent}
-                      value={form.desiredHostel}
-                      onChange={(e) => setForm({ ...form, desiredHostel: e.target.value })}
-                      className="select-field disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <option value="">Select Hostel</option>
-                      {HOSTELS.map(h => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                  </div>
+                  {!isRoomPartnerPage && (
+                    <div>
+                      <label className="block text-xs text-white/50 mb-1.5">Current Hostel *</label>
+                      <select
+                        required
+                        disabled={!!acceptingTargetStudent}
+                        value={form.currentHostel}
+                        onChange={(e) => setForm({ ...form, currentHostel: e.target.value })}
+                        className="select-field disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <option value="">Select Hostel</option>
+                        {HOSTELS.map(h => <option key={h} value={h}>{h}</option>)}
+                      </select>
+                    </div>
+                  )}
+                  {!isRoomPartnerPage && (
+                    <div>
+                      <label className="block text-xs text-white/50 mb-1.5">Desired Hostel *</label>
+                      <select
+                        required
+                        disabled={!!acceptingTargetStudent}
+                        value={form.desiredHostel}
+                        onChange={(e) => setForm({ ...form, desiredHostel: e.target.value })}
+                        className="select-field disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <option value="">Select Hostel</option>
+                        {HOSTELS.map(h => <option key={h} value={h}>{h}</option>)}
+                      </select>
+                    </div>
+                  )}
+                  {isRoomPartnerPage && (
+                    <div className="col-span-2 space-y-3">
+                      <div>
+                        <label className="block text-xs text-white/50 mb-2">Looking for Room Partner In *</label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {HOSTELS.map((h) => (
+                            <label
+                              key={h}
+                              className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all duration-200
+                                ${form.preferredHostel === h
+                                  ? 'border-blue-500/60 bg-blue-500/10'
+                                  : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
+                            >
+                              <input
+                                type="radio"
+                                name="preferredHostel"
+                                value={h}
+                                checked={form.preferredHostel === h}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setForm({
+                                    ...form,
+                                    preferredHostel: val,
+                                    roomType: val === 'Ramanujan Bhawan' ? 'Four Seater' : 'Double Seater'
+                                  });
+                                }}
+                                required
+                                className="w-4 h-4 accent-blue-500"
+                              />
+                              <div className="flex items-start gap-3">
+                                <Building2 size={20} className={h === 'Ramanujan Bhawan' ? 'text-blue-400' : 'text-purple-400'} />
+                                <div>
+                                  <p className="text-white/95 font-medium">{h === 'Ramanujan Bhawan' ? 'Ramanujan Hostel' : 'Ambedkar Hostel'}</p>
+                                  <p className="text-white/45 text-xs mt-0.5">Find a room partner in {h === 'Ramanujan Bhawan' ? 'Ramanujan Hostel' : 'Ambedkar Hostel'}</p>
+                                </div>
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs text-white/50 mb-1.5">Room Type *</label>
+                          <select
+                            required
+                            value={form.roomType}
+                            onChange={(e) => setForm({ ...form, roomType: e.target.value })}
+                            className="select-field"
+                          >
+                            <option value="">Select Room Type</option>
+                            {ROOM_TYPES.map((r) => <option key={r} value={r}>{r}</option>)}
+                          </select>
+                          <p className="text-white/30 text-xs mt-1">Options: Single Seater, Double Seater, Four Seater</p>
+                        </div>
+                        <div />
+                        <div>
+                          <label className="block text-xs text-white/50 mb-1.5">Total Students in Room *</label>
+                          <input
+                            required
+                            min="1"
+                            type="number"
+                            placeholder="e.g. 2"
+                            value={form.totalPeopleInRoom}
+                            onChange={(e) => setForm({ ...form, totalPeopleInRoom: e.target.value })}
+                            className="input-field"
+                          />
+                          <p className="text-white/30 text-xs mt-1">Total number of students currently staying in the room.</p>
+                        </div>
+                        <div>
+                          <label className="block text-xs text-white/50 mb-1.5">Vacant Seats *</label>
+                          <input
+                            required
+                            min="1"
+                            type="number"
+                            placeholder="e.g. 1"
+                            value={form.vacantSeats}
+                            onChange={(e) => setForm({ ...form, vacantSeats: e.target.value })}
+                            className="input-field"
+                          />
+                          <p className="text-white/30 text-xs mt-1">Number of vacant seats available for new roommates.</p>
+                          <p className="text-purple-300/80 text-xs mt-1">Total + vacant seats must fit selected room type capacity.</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div className="col-span-2">
-                    <label className="block text-xs text-white/50 mb-1.5">Contact Number <span className="text-white/25">(optional)</span></label>
+                    <label className="block text-xs text-white/50 mb-1.5">
+                      {isRoomPartnerPage ? 'Mobile Number *' : 'Contact Number'}
+                      {!isRoomPartnerPage && <span className="text-white/25"> (optional)</span>}
+                    </label>
                     <input
+                      required={isRoomPartnerPage}
                       type="tel"
                       placeholder="e.g. 9876543210"
                       value={form.contactNumber}
                       onChange={(e) => setForm({ ...form, contactNumber: e.target.value })}
                       className="input-field"
                     />
+                    {isRoomPartnerPage && <p className="text-white/30 text-xs mt-1">This number will be visible only to interested students after authentication.</p>}
                   </div>
+                  {isRoomPartnerPage && (
+                    <div className="col-span-2">
+                      <label className="block text-xs text-white/50 mb-1.5">Additional Preferences <span className="text-white/25">(optional)</span></label>
+                      <textarea
+                        rows={3}
+                        maxLength={200}
+                        placeholder="e.g. I prefer a quiet environment, no smoking, etc."
+                        value={form.additionalPreferences}
+                        onChange={(e) => setForm({ ...form, additionalPreferences: e.target.value })}
+                        className="input-field resize-none"
+                      />
+                      <div className="text-white/30 text-xs mt-1 text-right">{form.additionalPreferences.length}/200</div>
+                      <p className="text-white/30 text-xs mt-1">Tell others about your preferences, habits, or anything important.</p>
+                    </div>
+                  )}
+                  {acceptingTargetStudent && !isRoomPartnerPage && (
+                    <div className="col-span-2" />
+                  )}
                 </div>
 
                 <div className="flex gap-3 pt-2">
@@ -437,7 +640,7 @@ export default function Listings() {
                     ) : acceptingTargetStudent ? (
                       'Accept & Complete Swap'
                     ) : (
-                      'Create Listing'
+                      isRoomPartnerPage ? 'Create Listing' : 'Create Listing'
                     )}
                   </button>
                 </div>

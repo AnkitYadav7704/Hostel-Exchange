@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 const navLinks = [
   { to: '/', label: 'Home' },
   { to: '/listings', label: 'Listings' },
+  { to: '/room-partner', label: 'Find Room Partner' },
   { to: '/history', label: 'History' },
 ];
 
