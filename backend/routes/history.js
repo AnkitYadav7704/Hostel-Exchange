@@ -26,6 +26,13 @@ router.post('/', requireAuth, async (req, res) => {
       return res.status(404).json({ message: 'One or both students not found.' });
     }
 
+    // Compatibility check
+    const isMatch = studentA.currentHostel === studentB.desiredHostel &&
+                    studentA.desiredHostel === studentB.currentHostel;
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Incompatible swap requests.' });
+    }
+
     // Ownership check: confirming user must be one of the matched students
     if (studentA.uid !== req.user.uid && studentB.uid !== req.user.uid) {
       return res.status(403).json({

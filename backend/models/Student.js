@@ -36,12 +36,12 @@ const studentSchema = new mongoose.Schema(
     currentHostel: {
       type: String,
       required: [true, 'Current hostel is required'],
-      enum: ['Ramanujan Bhawan', 'Ambedkar Bhawan'],
+      enum: ['Ramanujan Bhawan', 'Ambedkar Bhawan', 'Kasturba Bhawan', 'Kalpana Bhawan'],
     },
     desiredHostel: {
       type: String,
       required: [true, 'Desired hostel is required'],
-      enum: ['Ramanujan Bhawan', 'Ambedkar Bhawan'],
+      enum: ['Ramanujan Bhawan', 'Ambedkar Bhawan', 'Kasturba Bhawan', 'Kalpana Bhawan'],
     },
     contactNumber: {
       type: String,

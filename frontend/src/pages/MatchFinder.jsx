@@ -35,7 +35,12 @@ export default function MatchFinder() {
 
   // Check if the logged-in user is in the unmatched waiting list
   const isWaiting = currentUser && data
-    ? [...(data.unmatchedRamanujan || []), ...(data.unmatchedAmbedkar || [])].some(
+    ? [
+        ...(data.unmatchedRamanujan || []),
+        ...(data.unmatchedAmbedkar || []),
+        ...(data.unmatchedKasturba || []),
+        ...(data.unmatchedKalpana || []),
+      ].some(
         (s) => s.uid === currentUser.uid
       )
     : false;
@@ -146,6 +151,20 @@ export default function MatchFinder() {
                       <AlertCircle size={13} className="text-amber-400" />
                       <span className="text-amber-400 font-bold">{data.unmatchedAmbedkar.length}</span>
                       <span className="text-white/40 text-sm">Waiting from Ambedkar</span>
+                    </div>
+                  )}
+                  {data.unmatchedKasturba?.length > 0 && (
+                    <div className="glass-card px-4 py-2.5 flex items-center gap-2">
+                      <AlertCircle size={13} className="text-amber-400" />
+                      <span className="text-amber-400 font-bold">{data.unmatchedKasturba.length}</span>
+                      <span className="text-white/40 text-sm">Waiting from Kasturba</span>
+                    </div>
+                  )}
+                  {data.unmatchedKalpana?.length > 0 && (
+                    <div className="glass-card px-4 py-2.5 flex items-center gap-2">
+                      <AlertCircle size={13} className="text-amber-400" />
+                      <span className="text-amber-400 font-bold">{data.unmatchedKalpana.length}</span>
+                      <span className="text-white/40 text-sm">Waiting from Kalpana</span>
                     </div>
                   )}
                 </div>

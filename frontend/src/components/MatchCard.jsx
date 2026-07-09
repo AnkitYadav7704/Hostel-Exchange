@@ -3,8 +3,16 @@ import { recordExchange } from '../api/api';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 
+const hostelBadge = (hostel) => {
+  if (hostel === 'Ramanujan Bhawan') return 'hostel-badge-ramanujan';
+  if (hostel === 'Ambedkar Bhawan') return 'hostel-badge-ambedkar';
+  if (hostel === 'Kasturba Bhawan') return 'hostel-badge-kasturba';
+  if (hostel === 'Kalpana Bhawan') return 'hostel-badge-kalpana';
+  return 'bg-white/10 text-white/60';
+};
+
 const HostelBadge = ({ hostel }) => (
-  <span className={hostel === 'Ramanujan Bhawan' ? 'hostel-badge-ramanujan' : 'hostel-badge-ambedkar'}>
+  <span className={hostelBadge(hostel)}>
     <Building size={10} />
     {hostel}
   </span>
@@ -105,8 +113,8 @@ export default function MatchCard({ match, index, onConfirm }) {
       <div className="flex items-center gap-2 p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-xl mb-4 text-xs text-white/50">
         <CheckCircle size={13} className="text-emerald-400 flex-shrink-0" />
         <span>
-          <span className="text-emerald-300">{match.studentA.name}</span> from <strong className="text-white/70">Ramanujan</strong> →{' '}
-          <span className="text-emerald-300">{match.studentB.name}</span> from <strong className="text-white/70">Ambedkar</strong>
+          <span className="text-emerald-300">{match.studentA.name}</span> from <strong className="text-white/70">{match.studentA.currentHostel.replace(' Bhawan', '')}</strong> ↔{' '}
+          <span className="text-emerald-300">{match.studentB.name}</span> from <strong className="text-white/70">{match.studentB.currentHostel.replace(' Bhawan', '')}</strong>
         </span>
       </div>
 

@@ -17,8 +17,13 @@ const statusDot = {
   'Exchange Completed': 'bg-emerald-400',
 };
 
-const hostelBadge = (hostel) =>
-  hostel === 'Ramanujan Bhawan' ? 'hostel-badge-ramanujan' : 'hostel-badge-ambedkar';
+const hostelBadge = (hostel) => {
+  if (hostel === 'Ramanujan Bhawan') return 'hostel-badge-ramanujan';
+  if (hostel === 'Ambedkar Bhawan') return 'hostel-badge-ambedkar';
+  if (hostel === 'Kasturba Bhawan') return 'hostel-badge-kasturba';
+  if (hostel === 'Kalpana Bhawan') return 'hostel-badge-kalpana';
+  return 'bg-white/10 text-white/60';
+};
 
 export default function ListingCard({ student, onUpdate, onDelete, onAccept, myListing }) {
   const [loading, setLoading] = useState(false);
@@ -124,12 +129,12 @@ export default function ListingCard({ student, onUpdate, onDelete, onAccept, myL
       <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5 mb-4">
         <span className={hostelBadge(student.currentHostel)}>
           <Building size={10} />
-          {student.currentHostel === 'Ramanujan Bhawan' ? 'Ramanujan' : 'Ambedkar'}
+          {student.currentHostel.replace(' Bhawan', '')}
         </span>
         <ArrowRight size={14} className="text-white/30 flex-shrink-0 mx-auto" />
         <span className={hostelBadge(student.desiredHostel)}>
           <Building size={10} />
-          {student.desiredHostel === 'Ramanujan Bhawan' ? 'Ramanujan' : 'Ambedkar'}
+          {student.desiredHostel.replace(' Bhawan', '')}
         </span>
       </div>
 

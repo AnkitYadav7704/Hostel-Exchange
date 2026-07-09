@@ -20,12 +20,12 @@ const exchangeHistorySchema = new mongoose.Schema(
     },
     oldHostelA: {
       type: String,
-      enum: ['Ramanujan Bhawan', 'Ambedkar Bhawan'],
+      enum: ['Ramanujan Bhawan', 'Ambedkar Bhawan', 'Kasturba Bhawan', 'Kalpana Bhawan'],
       required: true,
     },
     oldHostelB: {
       type: String,
-      enum: ['Ramanujan Bhawan', 'Ambedkar Bhawan'],
+      enum: ['Ramanujan Bhawan', 'Ambedkar Bhawan', 'Kasturba Bhawan', 'Kalpana Bhawan'],
       required: true,
     },
     exchangeDate: {

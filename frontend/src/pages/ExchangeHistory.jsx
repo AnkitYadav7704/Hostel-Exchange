@@ -3,10 +3,18 @@ import { History, Loader2, ArrowLeftRight, Calendar, Building, User, Hash, Phone
 import { getHistory } from '../api/api';
 import toast from 'react-hot-toast';
 
+const hostelBadge = (hostel) => {
+  if (hostel === 'Ramanujan Bhawan') return 'hostel-badge-ramanujan';
+  if (hostel === 'Ambedkar Bhawan') return 'hostel-badge-ambedkar';
+  if (hostel === 'Kasturba Bhawan') return 'hostel-badge-kasturba';
+  if (hostel === 'Kalpana Bhawan') return 'hostel-badge-kalpana';
+  return 'bg-white/10 text-white/60';
+};
+
 const HostelPill = ({ hostel }) => (
-  <span className={hostel === 'Ramanujan Bhawan' ? 'hostel-badge-ramanujan' : 'hostel-badge-ambedkar'}>
+  <span className={hostelBadge(hostel)}>
     <Building size={9} />
-    {hostel === 'Ramanujan Bhawan' ? 'Ramanujan' : 'Ambedkar'}
+    {hostel.replace(' Bhawan', '')}
   </span>
 );
 

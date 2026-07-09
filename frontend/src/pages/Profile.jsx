@@ -8,6 +8,14 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+const hostelBadge = (hostel) => {
+  if (hostel === 'Ramanujan Bhawan') return 'hostel-badge-ramanujan';
+  if (hostel === 'Ambedkar Bhawan') return 'hostel-badge-ambedkar';
+  if (hostel === 'Kasturba Bhawan') return 'hostel-badge-kasturba';
+  if (hostel === 'Kalpana Bhawan') return 'hostel-badge-kalpana';
+  return 'bg-white/10 text-white/60';
+};
+
 export default function Profile() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -109,29 +117,37 @@ export default function Profile() {
               <p className="text-white/40 text-sm mb-6 max-w-md mx-auto leading-relaxed">
                 Congratulations! Your hostel swap has been successfully finalized. Here are the details of your completed exchange:
               </p>
-              
+
               <div className="bg-white/3 border border-white/5 rounded-2xl p-5 mb-6 text-left space-y-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-white/40">Your Swap Partner</span>
                   <span className="text-white font-semibold">
-                    {profileData.completedExchange.studentA.uid === currentUser.uid 
-                      ? profileData.completedExchange.studentB.name 
+                    {profileData.completedExchange.studentA.uid === currentUser.uid
+                      ? profileData.completedExchange.studentB.name
                       : profileData.completedExchange.studentA.name}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-white/40">Exchanged From</span>
-                  <span className="hostel-badge-ramanujan">
-                    {profileData.completedExchange.studentA.uid === currentUser.uid 
-                      ? profileData.completedExchange.oldHostelA 
+                  <span className={hostelBadge(
+                    profileData.completedExchange.studentA.uid === currentUser.uid
+                      ? profileData.completedExchange.oldHostelA
+                      : profileData.completedExchange.oldHostelB
+                  )}>
+                    {profileData.completedExchange.studentA.uid === currentUser.uid
+                      ? profileData.completedExchange.oldHostelA
                       : profileData.completedExchange.oldHostelB}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-white/40">Exchanged To</span>
-                  <span className="hostel-badge-ambedkar">
-                    {profileData.completedExchange.studentA.uid === currentUser.uid 
-                      ? profileData.completedExchange.oldHostelB 
+                  <span className={hostelBadge(
+                    profileData.completedExchange.studentA.uid === currentUser.uid
+                      ? profileData.completedExchange.oldHostelB
+                      : profileData.completedExchange.oldHostelA
+                  )}>
+                    {profileData.completedExchange.studentA.uid === currentUser.uid
+                      ? profileData.completedExchange.oldHostelB
                       : profileData.completedExchange.oldHostelA}
                   </span>
                 </div>
@@ -144,7 +160,7 @@ export default function Profile() {
                   </span>
                 </div>
               </div>
-              
+
               <button onClick={() => navigate('/history')} className="btn-secondary mx-auto flex items-center gap-2 w-fit">
                 View Global Swap History
               </button>
@@ -169,7 +185,7 @@ export default function Profile() {
           <div className="space-y-8 animate-fade-in">
             {/* Main Flex Layout */}
             <div className="grid lg:grid-cols-2 gap-8 items-stretch">
-              
+
               {/* Left Side: User Profile Card */}
               <div className="glass-card border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent p-6 sm:p-8 flex flex-col justify-between">
                 <div>
@@ -215,15 +231,15 @@ export default function Profile() {
                 <div className="mt-8 pt-6 border-t border-white/10 flex items-center gap-3 bg-white/3 p-4 rounded-xl">
                   <div className="flex-1 text-center">
                     <p className="text-white/30 text-xs uppercase mb-1">Current</p>
-                    <span className={profileData.student.currentHostel === 'Ramanujan Bhawan' ? 'hostel-badge-ramanujan' : 'hostel-badge-ambedkar'}>
-                      {profileData.student.currentHostel === 'Ramanujan Bhawan' ? 'Ramanujan' : 'Ambedkar'}
+                    <span className={hostelBadge(profileData.student.currentHostel)}>
+                      {profileData.student.currentHostel.replace(' Bhawan', '')}
                     </span>
                   </div>
                   <ArrowLeftRight size={16} className="text-white/20" />
                   <div className="flex-1 text-center">
                     <p className="text-white/30 text-xs uppercase mb-1">Desired</p>
-                    <span className={profileData.student.desiredHostel === 'Ramanujan Bhawan' ? 'hostel-badge-ramanujan' : 'hostel-badge-ambedkar'}>
-                      {profileData.student.desiredHostel === 'Ramanujan Bhawan' ? 'Ramanujan' : 'Ambedkar'}
+                    <span className={hostelBadge(profileData.student.desiredHostel)}>
+                      {profileData.student.desiredHostel.replace(' Bhawan', '')}
                     </span>
                   </div>
                 </div>
@@ -272,15 +288,15 @@ export default function Profile() {
                       <div className="flex items-center gap-3 bg-white/3 p-4 rounded-xl border border-white/5">
                         <div className="flex-1 text-center">
                           <p className="text-white/30 text-xs uppercase mb-1">Has</p>
-                          <span className={profileData.partner.currentHostel === 'Ramanujan Bhawan' ? 'hostel-badge-ramanujan' : 'hostel-badge-ambedkar'}>
-                            {profileData.partner.currentHostel === 'Ramanujan Bhawan' ? 'Ramanujan' : 'Ambedkar'}
+                          <span className={hostelBadge(profileData.partner.currentHostel)}>
+                            {profileData.partner.currentHostel.replace(' Bhawan', '')}
                           </span>
                         </div>
                         <ArrowLeftRight size={16} className="text-white/20 animate-pulse" />
                         <div className="flex-1 text-center">
                           <p className="text-white/30 text-xs uppercase mb-1">Wants</p>
-                          <span className={profileData.partner.desiredHostel === 'Ramanujan Bhawan' ? 'hostel-badge-ramanujan' : 'hostel-badge-ambedkar'}>
-                            {profileData.partner.desiredHostel === 'Ramanujan Bhawan' ? 'Ramanujan' : 'Ambedkar'}
+                          <span className={hostelBadge(profileData.partner.desiredHostel)}>
+                            {profileData.partner.desiredHostel.replace(' Bhawan', '')}
                           </span>
                         </div>
                       </div>
@@ -321,5 +337,19 @@ export default function Profile() {
         )}
       </div>
     </div>
+  );
+}
+<div className="inline-flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs px-4 py-2 rounded-full">
+  <AlertCircle size={12} />
+  Waiting for partners from the other hostel
+</div>
+                  </div >
+                )}
+              </div >
+            </div >
+          </div >
+        )}
+      </div >
+    </div >
   );
 }

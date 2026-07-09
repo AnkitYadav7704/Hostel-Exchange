@@ -17,10 +17,14 @@ export default function Footer() {
           </div>
 
           {/* Links */}
-          <div className="flex flex-wrap items-center gap-6 text-sm text-white/40">
-            <span>Ramanujan Bhawan</span>
+          <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-white/40 justify-center md:justify-start">
+            <span>Ramanujan</span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>Ambedkar Bhawan</span>
+            <span>Ambedkar</span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <span>Kasturba</span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <span>Kalpana</span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span>Gorakhpur, UP</span>
           </div>

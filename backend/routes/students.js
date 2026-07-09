@@ -10,22 +10,41 @@ router.get('/stats', async (req, res) => {
     const total = await Student.countDocuments();
     const ramanujan = await Student.countDocuments({ currentHostel: 'Ramanujan Bhawan' });
     const ambedkar = await Student.countDocuments({ currentHostel: 'Ambedkar Bhawan' });
+    const kasturba = await Student.countDocuments({ currentHostel: 'Kasturba Bhawan' });
+    const kalpana = await Student.countDocuments({ currentHostel: 'Kalpana Bhawan' });
 
     // Completed exchanges live in ExchangeHistory
     const completed = await ExchangeHistory.countDocuments();
 
-    // Count perfect matches
-    const wantAmbedkar = await Student.find({
+    // Count perfect matches (boys)
+    const wantAmbedkar = await Student.countDocuments({
       currentHostel: 'Ramanujan Bhawan',
       desiredHostel: 'Ambedkar Bhawan',
+      status: 'Looking for Exchange',
     });
-    const wantRamanujan = await Student.find({
+    const wantRamanujan = await Student.countDocuments({
       currentHostel: 'Ambedkar Bhawan',
       desiredHostel: 'Ramanujan Bhawan',
+      status: 'Looking for Exchange',
     });
-    const possibleMatches = Math.min(wantAmbedkar.length, wantRamanujan.length);
+    const possibleBoysMatches = Math.min(wantAmbedkar, wantRamanujan);
 
-    res.json({ total, ramanujan, ambedkar, possibleMatches, completed });
+    // Count perfect matches (girls)
+    const wantKalpana = await Student.countDocuments({
+      currentHostel: 'Kasturba Bhawan',
+      desiredHostel: 'Kalpana Bhawan',
+      status: 'Looking for Exchange',
+    });
+    const wantKasturba = await Student.countDocuments({
+      currentHostel: 'Kalpana Bhawan',
+      desiredHostel: 'Kasturba Bhawan',
+      status: 'Looking for Exchange',
+    });
+    const possibleGirlsMatches = Math.min(wantKalpana, wantKasturba);
+
+    const possibleMatches = possibleBoysMatches + possibleGirlsMatches;
+
+    res.json({ total, ramanujan, ambedkar, kasturba, kalpana, possibleMatches, completed });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -47,29 +66,55 @@ router.get('/me', requireAuth, async (req, res) => {
     }
 
     // Compute matches to find the partner
-    const groupA = await Student.find({
-      currentHostel: 'Ramanujan Bhawan',
-      desiredHostel: 'Ambedkar Bhawan',
-      status: 'Looking for Exchange',
-    }).sort({ createdAt: 1 });
-
-    const groupB = await Student.find({
-      currentHostel: 'Ambedkar Bhawan',
-      desiredHostel: 'Ramanujan Bhawan',
-      status: 'Looking for Exchange',
-    }).sort({ createdAt: 1 });
-
-    const matchCount = Math.min(groupA.length, groupB.length);
     let partner = null;
 
-    for (let i = 0; i < matchCount; i++) {
-      if (groupA[i]._id.equals(student._id)) {
-        partner = groupB[i];
-        break;
+    if (student.currentHostel === 'Ramanujan Bhawan' || student.currentHostel === 'Ambedkar Bhawan') {
+      const groupA = await Student.find({
+        currentHostel: 'Ramanujan Bhawan',
+        desiredHostel: 'Ambedkar Bhawan',
+        status: 'Looking for Exchange',
+      }).sort({ createdAt: 1 });
+
+      const groupB = await Student.find({
+        currentHostel: 'Ambedkar Bhawan',
+        desiredHostel: 'Ramanujan Bhawan',
+        status: 'Looking for Exchange',
+      }).sort({ createdAt: 1 });
+
+      const matchCount = Math.min(groupA.length, groupB.length);
+      for (let i = 0; i < matchCount; i++) {
+        if (groupA[i]._id.equals(student._id)) {
+          partner = groupB[i];
+          break;
+        }
+        if (groupB[i]._id.equals(student._id)) {
+          partner = groupA[i];
+          break;
+        }
       }
-      if (groupB[i]._id.equals(student._id)) {
-        partner = groupA[i];
-        break;
+    } else if (student.currentHostel === 'Kasturba Bhawan' || student.currentHostel === 'Kalpana Bhawan') {
+      const groupC = await Student.find({
+        currentHostel: 'Kasturba Bhawan',
+        desiredHostel: 'Kalpana Bhawan',
+        status: 'Looking for Exchange',
+      }).sort({ createdAt: 1 });
+
+      const groupD = await Student.find({
+        currentHostel: 'Kalpana Bhawan',
+        desiredHostel: 'Kasturba Bhawan',
+        status: 'Looking for Exchange',
+      }).sort({ createdAt: 1 });
+
+      const matchCount = Math.min(groupC.length, groupD.length);
+      for (let i = 0; i < matchCount; i++) {
+        if (groupC[i]._id.equals(student._id)) {
+          partner = groupD[i];
+          break;
+        }
+        if (groupD[i]._id.equals(student._id)) {
+          partner = groupC[i];
+          break;
+        }
       }
     }
 
@@ -114,6 +159,19 @@ router.post('/', requireAuth, async (req, res) => {
       return res
         .status(400)
         .json({ message: 'Current hostel and desired hostel cannot be the same.' });
+    }
+
+    const validSwaps = {
+      'Ramanujan Bhawan': 'Ambedkar Bhawan',
+      'Ambedkar Bhawan': 'Ramanujan Bhawan',
+      'Kasturba Bhawan': 'Kalpana Bhawan',
+      'Kalpana Bhawan': 'Kasturba Bhawan',
+    };
+
+    if (validSwaps[currentHostel] !== desiredHostel) {
+      return res.status(400).json({
+        message: `Incompatible swap request. ${currentHostel} can only be exchanged with ${validSwaps[currentHostel] || 'its counterpart'}.`,
+      });
     }
 
     // One listing per user

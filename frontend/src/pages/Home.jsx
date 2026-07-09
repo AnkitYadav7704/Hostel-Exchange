@@ -51,8 +51,7 @@ export default function Home() {
           </h1>
 
           <p className="text-white/50 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
-            Exchange your hostel between <span className="text-purple-300 font-semibold">Ramanujan Bhawan</span> and{' '}
-            <span className="text-blue-300 font-semibold">Ambedkar Bhawan</span> — instantly, transparently, and without the WhatsApp chaos.
+            Exchange your hostel at MMMUT — instantly, transparently, and without the WhatsApp chaos. Supports boys' and girls' hostels.
           </p>
 
           {/* Quick Search */}
@@ -98,7 +97,7 @@ export default function Home() {
             <h2 className="section-title">Exchange at a Glance</h2>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
             <StatCard
               icon={Users}
               label="Total Students"
@@ -108,17 +107,31 @@ export default function Home() {
             />
             <StatCard
               icon={Building2}
-              label="Ramanujan Bhawan"
+              label="Ramanujan"
               value={loading ? '...' : stats?.ramanujan ?? 0}
               color="purple"
               delay="animation-delay-200"
             />
             <StatCard
               icon={Building2}
-              label="Ambedkar Bhawan"
+              label="Ambedkar"
               value={loading ? '...' : stats?.ambedkar ?? 0}
               color="blue"
               delay="animation-delay-300"
+            />
+            <StatCard
+              icon={Building2}
+              label="Kasturba"
+              value={loading ? '...' : stats?.kasturba ?? 0}
+              color="rose"
+              delay="animation-delay-300"
+            />
+            <StatCard
+              icon={Building2}
+              label="Kalpana"
+              value={loading ? '...' : stats?.kalpana ?? 0}
+              color="emerald"
+              delay="animation-delay-350"
             />
             <StatCard
               icon={Sparkles}
@@ -129,7 +142,7 @@ export default function Home() {
             />
             <StatCard
               icon={CheckCircle}
-              label="Completed Exchanges"
+              label="Completed"
               value={loading ? '...' : stats?.completed ?? 0}
               color="amber"
               delay="animation-delay-400"

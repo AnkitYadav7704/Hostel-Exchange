@@ -8,8 +8,18 @@ import toast from 'react-hot-toast';
 
 const BRANCHES = ['CSE', 'IT', 'ECE', 'EE', 'ME', 'CE', 'CH', 'MCA', 'MBA', 'Other'];
 const YEARS = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
-const HOSTELS = ['Ramanujan Bhawan', 'Ambedkar Bhawan'];
+const HOSTELS = ['Ramanujan Bhawan', 'Ambedkar Bhawan', 'Kasturba Bhawan', 'Kalpana Bhawan'];
 const STATUSES = ['Looking for Exchange', 'Match Found', 'Exchange Completed'];
+
+const getCompatibleHostel = (hostel) => {
+  const compat = {
+    'Ramanujan Bhawan': 'Ambedkar Bhawan',
+    'Ambedkar Bhawan': 'Ramanujan Bhawan',
+    'Kasturba Bhawan': 'Kalpana Bhawan',
+    'Kalpana Bhawan': 'Kasturba Bhawan',
+  };
+  return compat[hostel] || '';
+};
 
 const defaultForm = {
   name: '', rollNumber: '', branch: '', year: '',
@@ -387,7 +397,11 @@ export default function Listings() {
                       required
                       disabled={!!acceptingTargetStudent}
                       value={form.currentHostel}
-                      onChange={(e) => setForm({ ...form, currentHostel: e.target.value })}
+                      onChange={(e) => {
+                        const current = e.target.value;
+                        const desired = getCompatibleHostel(current);
+                        setForm({ ...form, currentHostel: current, desiredHostel: desired });
+                      }}
                       className="select-field disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <option value="">Select Hostel</option>
@@ -398,12 +412,12 @@ export default function Listings() {
                     <label className="block text-xs text-white/50 mb-1.5">Desired Hostel *</label>
                     <select
                       required
-                      disabled={!!acceptingTargetStudent}
+                      disabled
                       value={form.desiredHostel}
                       onChange={(e) => setForm({ ...form, desiredHostel: e.target.value })}
-                      className="select-field disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="select-field disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                      <option value="">Select Hostel</option>
+                      <option value="">Auto-selected</option>
                       {HOSTELS.map(h => <option key={h} value={h}>{h}</option>)}
                     </select>
                   </div>

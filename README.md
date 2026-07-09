@@ -27,7 +27,7 @@ Edit `backend/.env` and replace the placeholder with your actual MongoDB Atlas U
 
 ```env
 MONGO_URI=mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@YOUR_CLUSTER.mongodb.net/hostel-exchange?retryWrites=true&w=majority
-PORT=5000
+PORT=5001
 ```
 
 ### Step 2: Install Dependencies
@@ -52,7 +52,7 @@ Open **two terminals**:
 # Terminal 1 — Backend
 cd backend
 npm run dev
-# → http://localhost:5000
+# → http://localhost:5001
 
 # Terminal 2 — Frontend
 cd frontend
