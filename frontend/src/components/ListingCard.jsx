@@ -25,7 +25,7 @@ const hostelBadge = (hostel) => {
   return 'bg-white/10 text-white/60';
 };
 
-export default function ListingCard({ student, onUpdate, onDelete, onAccept, myListing }) {
+export default function ListingCard({ student, onUpdate, onDelete, onAccept, myListing, isRoomPartnerMode = false }) {
   const [loading, setLoading] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const { currentUser } = useAuth();
@@ -102,7 +102,9 @@ export default function ListingCard({ student, onUpdate, onDelete, onAccept, myL
         {!isOwner && (
           <div className={`${statusBadge[student.status]}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${statusDot[student.status]}`} />
-            {student.status}
+            {isRoomPartnerMode
+              ? (student.status === 'Looking for Exchange' ? 'Looking for Partner' : 'Partner Found')
+              : student.status}
           </div>
         )}
       </div>
@@ -125,24 +127,56 @@ export default function ListingCard({ student, onUpdate, onDelete, onAccept, myL
         )}
       </div>
 
-      {/* Hostel exchange visualization */}
-      <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5 mb-4">
-        <span className={hostelBadge(student.currentHostel)}>
-          <Building size={10} />
-          {student.currentHostel.replace(' Bhawan', '')}
-        </span>
-        <ArrowRight size={14} className="text-white/30 flex-shrink-0 mx-auto" />
-        <span className={hostelBadge(student.desiredHostel)}>
-          <Building size={10} />
-          {student.desiredHostel.replace(' Bhawan', '')}
-        </span>
-      </div>
+      {/* Hostel visualization */}
+      {isRoomPartnerMode ? (
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5">
+            <span className={hostelBadge(student.preferredHostel || student.desiredHostel)}>
+              <Building size={10} />
+              Looking in: {(student.preferredHostel || student.desiredHostel).replace(' Bhawan', '')}
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-center">
+              <p className="text-white/35">Room</p>
+              <p className="text-white/90 font-semibold">{student.roomType || '—'}</p>
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-center">
+              <p className="text-white/35">Total</p>
+              <p className="text-white/90 font-semibold">{student.totalPeopleInRoom || '—'}</p>
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-center">
+              <p className="text-white/35">Vacant</p>
+              <p className="text-white/90 font-semibold">{student.vacantSeats || '—'}</p>
+            </div>
+          </div>
+          {student.additionalPreferences && (
+            <p className="text-white/45 text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+              {student.additionalPreferences}
+            </p>
+          )}
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5 mb-4">
+          <span className={hostelBadge(student.currentHostel)}>
+            <Building size={10} />
+            {student.currentHostel.replace(' Bhawan', '')}
+          </span>
+          <ArrowRight size={14} className="text-white/30 flex-shrink-0 mx-auto" />
+          <span className={hostelBadge(student.desiredHostel)}>
+            <Building size={10} />
+            {student.desiredHostel.replace(' Bhawan', '')}
+          </span>
+        </div>
+      )}
 
       {/* Status badge for owner (below hostel row) */}
       {isOwner && (
         <div className={`${statusBadge[student.status]} mb-4`}>
           <span className={`w-1.5 h-1.5 rounded-full ${statusDot[student.status]}`} />
-          {student.status}
+          {isRoomPartnerMode
+            ? (student.status === 'Looking for Exchange' ? 'Looking for Partner' : 'Partner Found')
+            : student.status}
         </div>
       )}
 
@@ -173,7 +207,9 @@ export default function ListingCard({ student, onUpdate, onDelete, onAccept, myL
                     className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-white/5
                                 ${student.status === s ? 'text-blue-400 bg-blue-500/10' : 'text-white/60'}`}
                   >
-                    {s}
+                    {isRoomPartnerMode
+                      ? (s === 'Looking for Exchange' ? 'Looking for Partner' : 'Partner Found')
+                      : s}
                   </button>
                 ))}
               </div>
@@ -186,7 +222,7 @@ export default function ListingCard({ student, onUpdate, onDelete, onAccept, myL
       ) : (
         /* Non-owner actions */
         <div className="w-full space-y-2">
-          {student.status === 'Looking for Exchange' && (
+          {!isRoomPartnerMode && student.status === 'Looking for Exchange' && (
             myListing ? (
               isMatch ? (
                 <button
@@ -215,6 +251,11 @@ export default function ListingCard({ student, onUpdate, onDelete, onAccept, myL
                 Accept Swap
               </button>
             )
+          )}
+          {isRoomPartnerMode && student.contactNumber && (
+            <p className="text-white/50 text-xs text-center">
+              Contact: {student.contactNumber}
+            </p>
           )}
           {!currentUser && (
             <button

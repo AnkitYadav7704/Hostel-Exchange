@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 const navLinks = [
   { to: '/', label: 'Home' },
   { to: '/listings', label: 'Listings' },
+  { to: '/room-partner', label: 'Find Room Partner' },
   { to: '/history', label: 'History' },
 ];
 
@@ -113,12 +114,12 @@ export default function Navbar() {
                     </div>
                     {/* Actions */}
                     <button
-                      onClick={() => { navigate('/listings'); setProfileOpen(false); }}
+                      onClick={() => { navigate('/profile'); setProfileOpen(false); }}
                       className="w-full text-left px-4 py-2.5 text-sm text-white/60 hover:text-white 
                                  hover:bg-white/5 transition-colors flex items-center gap-2"
                     >
-                      <ArrowLeftRight size={13} />
-                      My Listing
+                      <User size={13} className="text-white/60" />
+                      My Profile
                     </button>
                     <button
                       onClick={handleLogout}
@@ -190,6 +191,14 @@ export default function Navbar() {
                     </span>
                   </div>
                   <button
+                    onClick={() => { navigate('/profile'); setMobileOpen(false); }}
+                    className="w-full text-left px-4 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 
+                               rounded-lg transition-colors flex items-center gap-2 mb-1"
+                  >
+                    <User size={13} />
+                    My Profile
+                  </button>
+                  <button
                     onClick={() => { handleLogout(); setMobileOpen(false); }}
                     className="w-full text-left px-4 py-2.5 text-sm text-rose-400 hover:bg-rose-500/10 
                                rounded-lg transition-colors flex items-center gap-2"
@@ -198,6 +207,7 @@ export default function Navbar() {
                     Sign Out
                   </button>
                 </div>
+
               ) : (
                 <button
                   onClick={() => { navigate('/login'); setMobileOpen(false); }}
