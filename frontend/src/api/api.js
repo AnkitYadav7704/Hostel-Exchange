@@ -30,4 +30,7 @@ export const getHistory = () => api.get('/history');
 export const recordExchange = (studentAId, studentBId) =>
   api.post('/history', { studentAId, studentBId });
 
+// ── Matches ───────────────────────────────────────────────
+export const getMatches = () => api.get('/matches');
+
 export default api;

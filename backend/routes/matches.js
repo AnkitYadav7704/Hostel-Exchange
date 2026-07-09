@@ -11,6 +11,7 @@ router.get('/', optionalAuth, async (req, res) => {
       currentHostel: 'Ramanujan Bhawan',
       desiredHostel: 'Ambedkar Bhawan',
       status: 'Looking for Exchange',
+      listingType: 'exchange',
     }).sort({ createdAt: 1 });
 
     // Students in Ambedkar who want Ramanujan
@@ -18,6 +19,7 @@ router.get('/', optionalAuth, async (req, res) => {
       currentHostel: 'Ambedkar Bhawan',
       desiredHostel: 'Ramanujan Bhawan',
       status: 'Looking for Exchange',
+      listingType: 'exchange',
     }).sort({ createdAt: 1 });
 
     // Students in Kasturba who want Kalpana
@@ -25,6 +27,7 @@ router.get('/', optionalAuth, async (req, res) => {
       currentHostel: 'Kasturba Bhawan',
       desiredHostel: 'Kalpana Bhawan',
       status: 'Looking for Exchange',
+      listingType: 'exchange',
     }).sort({ createdAt: 1 });
 
     // Students in Kalpana who want Kasturba
@@ -32,6 +35,7 @@ router.get('/', optionalAuth, async (req, res) => {
       currentHostel: 'Kalpana Bhawan',
       desiredHostel: 'Kasturba Bhawan',
       status: 'Looking for Exchange',
+      listingType: 'exchange',
     }).sort({ createdAt: 1 });
 
     // Pair boys

@@ -13,11 +13,11 @@ const ROOM_CAPACITY = {
 // GET /api/students/stats  (public)
 router.get('/stats', async (req, res) => {
   try {
-    const total = await Student.countDocuments();
-    const ramanujan = await Student.countDocuments({ currentHostel: 'Ramanujan Bhawan' });
-    const ambedkar = await Student.countDocuments({ currentHostel: 'Ambedkar Bhawan' });
-    const kasturba = await Student.countDocuments({ currentHostel: 'Kasturba Bhawan' });
-    const kalpana = await Student.countDocuments({ currentHostel: 'Kalpana Bhawan' });
+    const total = await Student.countDocuments({ listingType: 'exchange' });
+    const ramanujan = await Student.countDocuments({ currentHostel: 'Ramanujan Bhawan', listingType: 'exchange' });
+    const ambedkar = await Student.countDocuments({ currentHostel: 'Ambedkar Bhawan', listingType: 'exchange' });
+    const kasturba = await Student.countDocuments({ currentHostel: 'Kasturba Bhawan', listingType: 'exchange' });
+    const kalpana = await Student.countDocuments({ currentHostel: 'Kalpana Bhawan', listingType: 'exchange' });
 
     // Completed exchanges live in ExchangeHistory
     const completed = await ExchangeHistory.countDocuments();
@@ -79,12 +79,14 @@ router.get('/me', requireAuth, async (req, res) => {
         currentHostel: 'Ramanujan Bhawan',
         desiredHostel: 'Ambedkar Bhawan',
         status: 'Looking for Exchange',
+        listingType: 'exchange',
       }).sort({ createdAt: 1 });
 
       const groupB = await Student.find({
         currentHostel: 'Ambedkar Bhawan',
         desiredHostel: 'Ramanujan Bhawan',
         status: 'Looking for Exchange',
+        listingType: 'exchange',
       }).sort({ createdAt: 1 });
 
       const matchCount = Math.min(groupA.length, groupB.length);
@@ -103,12 +105,14 @@ router.get('/me', requireAuth, async (req, res) => {
         currentHostel: 'Kasturba Bhawan',
         desiredHostel: 'Kalpana Bhawan',
         status: 'Looking for Exchange',
+        listingType: 'exchange',
       }).sort({ createdAt: 1 });
 
       const groupD = await Student.find({
         currentHostel: 'Kalpana Bhawan',
         desiredHostel: 'Kasturba Bhawan',
         status: 'Looking for Exchange',
+        listingType: 'exchange',
       }).sort({ createdAt: 1 });
 
       const matchCount = Math.min(groupC.length, groupD.length);

@@ -60,7 +60,7 @@ const studentSchema = new mongoose.Schema(
     },
     preferredHostel: {
       type: String,
-      enum: ['Ramanujan Bhawan', 'Ambedkar Bhawan', ''],
+      enum: ['Ramanujan Bhawan', 'Ambedkar Bhawan', 'Kasturba Bhawan', 'Kalpana Bhawan', ''],
       default: '',
     },
     roomType: {

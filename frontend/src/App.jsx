@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Listings from './pages/Listings';
 import ExchangeHistory from './pages/ExchangeHistory';
 import Login from './pages/Login';
+import Profile from './pages/Profile';
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="/listings" element={<Listings />} />
             <Route path="/room-partner" element={<Listings />} />
             <Route path="/history" element={<ExchangeHistory />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/login" element={<Login />} />
           </Routes>
         </main>

@@ -339,17 +339,3 @@ export default function Profile() {
     </div>
   );
 }
-<div className="inline-flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs px-4 py-2 rounded-full">
-  <AlertCircle size={12} />
-  Waiting for partners from the other hostel
-</div>
-                  </div >
-                )}
-              </div >
-            </div >
-          </div >
-        )}
-      </div >
-    </div >
-  );
-}

@@ -12,9 +12,11 @@ app.use(express.json());
 // Routes
 const studentRoutes = require('./routes/students');
 const historyRoutes = require('./routes/history');
+const matchRoutes = require('./routes/matches');
 
 app.use('/api/students', studentRoutes);
 app.use('/api/history', historyRoutes);
+app.use('/api/matches', matchRoutes);
 
 // Health check
 app.get('/', (req, res) => {
