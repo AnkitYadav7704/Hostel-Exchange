@@ -10,6 +10,12 @@ const BRANCHES = ['CSE', 'IT', 'ECE', 'EE', 'ME', 'CE', 'CH', 'MCA', 'MBA', 'Oth
 const YEARS = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
 const HOSTELS = ['Ramanujan Bhawan', 'Ambedkar Bhawan', 'Kasturba Bhawan', 'Kalpana Bhawan'];
 const STATUSES = ['Looking for Exchange', 'Match Found', 'Exchange Completed'];
+const ROOM_TYPES = ['Single Seater', 'Double Seater', 'Four Seater'];
+const ROOM_CAPACITY = {
+  'Single Seater': 1,
+  'Double Seater': 2,
+  'Four Seater': 4,
+};
 
 const getCompatibleHostel = (hostel) => {
   const compat = {
