@@ -33,8 +33,8 @@ export default function ListingCard({ student, onUpdate, onDelete, onAccept, myL
 
   const isOwner = currentUser && currentUser.uid === student.uid;
   const isMatch = myListing &&
-                  myListing.currentHostel === student.desiredHostel &&
-                  myListing.desiredHostel === student.currentHostel;
+    myListing.currentHostel === student.desiredHostel &&
+    myListing.desiredHostel === student.currentHostel;
   const statuses = ['Looking for Exchange', 'Match Found'];
 
   const handleStatusChange = async (newStatus) => {
@@ -72,9 +72,8 @@ export default function ListingCard({ student, onUpdate, onDelete, onAccept, myL
   };
 
   return (
-    <div className={`glass-card-hover p-5 animate-fade-in group relative ${
-      isOwner ? 'border-blue-500/30 bg-gradient-to-br from-blue-500/5 to-transparent' : ''
-    }`}>
+    <div className={`glass-card-hover p-5 animate-fade-in group relative ${isOwner ? 'border-blue-500/30 bg-gradient-to-br from-blue-500/5 to-transparent' : ''
+      }`}>
       {/* "Your Listing" badge for owner */}
       {isOwner && (
         <div className="absolute top-3 right-3 flex items-center gap-1 bg-blue-500/20 border border-blue-500/30 
@@ -127,48 +126,18 @@ export default function ListingCard({ student, onUpdate, onDelete, onAccept, myL
         )}
       </div>
 
-      {/* Hostel visualization */}
-      {isRoomPartnerMode ? (
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5">
-            <span className={hostelBadge(student.preferredHostel || student.desiredHostel)}>
-              <Building size={10} />
-              Looking in: {(student.preferredHostel || student.desiredHostel).replace(' Bhawan', '')}
-            </span>
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-xs">
-            <div className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-center">
-              <p className="text-white/35">Room</p>
-              <p className="text-white/90 font-semibold">{student.roomType || '—'}</p>
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-center">
-              <p className="text-white/35">Total</p>
-              <p className="text-white/90 font-semibold">{student.totalPeopleInRoom || '—'}</p>
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-center">
-              <p className="text-white/35">Vacant</p>
-              <p className="text-white/90 font-semibold">{student.vacantSeats || '—'}</p>
-            </div>
-          </div>
-          {student.additionalPreferences && (
-            <p className="text-white/45 text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-2">
-              {student.additionalPreferences}
-            </p>
-          )}
-        </div>
-      ) : (
-        <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5 mb-4">
-          <span className={hostelBadge(student.currentHostel)}>
-            <Building size={10} />
-            {student.currentHostel.replace(' Bhawan', '')}
-          </span>
-          <ArrowRight size={14} className="text-white/30 flex-shrink-0 mx-auto" />
-          <span className={hostelBadge(student.desiredHostel)}>
-            <Building size={10} />
-            {student.desiredHostel.replace(' Bhawan', '')}
-          </span>
-        </div>
-      )}
+      {/* Hostel exchange visualization */}
+      <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5 mb-4">
+        <span className={hostelBadge(student.currentHostel)}>
+          <Building size={10} />
+          {student.currentHostel.replace(' Bhawan', '')}
+        </span>
+        <ArrowRight size={14} className="text-white/30 flex-shrink-0 mx-auto" />
+        <span className={hostelBadge(student.desiredHostel)}>
+          <Building size={10} />
+          {student.desiredHostel.replace(' Bhawan', '')}
+        </span>
+      </div>
 
       {/* Status badge for owner (below hostel row) */}
       {isOwner && (

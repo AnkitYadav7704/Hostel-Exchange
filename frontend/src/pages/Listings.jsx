@@ -8,17 +8,7 @@ import toast from 'react-hot-toast';
 
 const BRANCHES = ['CSE', 'IT', 'ECE', 'EE', 'ME', 'CE', 'CH', 'MCA', 'MBA', 'Other'];
 const YEARS = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
-<<<<<<< HEAD
 const HOSTELS = ['Ramanujan Bhawan', 'Ambedkar Bhawan', 'Kasturba Bhawan', 'Kalpana Bhawan'];
-=======
-const HOSTELS = ['Ramanujan Bhawan', 'Ambedkar Bhawan'];
-const ROOM_TYPES = ['Single Seater', 'Double Seater', 'Four Seater'];
-const ROOM_CAPACITY = {
-  'Single Seater': 1,
-  'Double Seater': 2,
-  'Four Seater': 4,
-};
->>>>>>> b2457db87b1c473c1b76014bbdd144d9ad87627f
 const STATUSES = ['Looking for Exchange', 'Match Found', 'Exchange Completed'];
 
 const getCompatibleHostel = (hostel) => {
@@ -127,7 +117,7 @@ export default function Listings() {
   const handleAcceptSwap = async (targetStudent) => {
     if (myListing) {
       const isMatch = myListing.currentHostel === targetStudent.desiredHostel &&
-                      myListing.desiredHostel === targetStudent.currentHostel;
+        myListing.desiredHostel === targetStudent.currentHostel;
       if (isMatch) {
         if (window.confirm(`Swap hostels with ${targetStudent.name} immediately?`)) {
           try {
@@ -412,7 +402,7 @@ export default function Listings() {
                         : 'Create Exchange Listing'}
                   </h2>
                   <p className="text-white/40 text-sm mt-1">
-                    {acceptingTargetStudent 
+                    {acceptingTargetStudent
                       ? `Complete your details to swap with ${acceptingTargetStudent.name}`
                       : isRoomPartnerPage
                         ? 'Create a listing to find a compatible room partner in Ramanujan Hostel or Ambedkar Hostel.'
@@ -431,7 +421,7 @@ export default function Listings() {
                 <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs px-4 py-3 rounded-xl mb-4 flex items-center gap-2">
                   <ArrowRight size={14} className="rotate-180 flex-shrink-0" />
                   <span>
-                    You are swapping with <strong>{acceptingTargetStudent.name}</strong>. 
+                    You are swapping with <strong>{acceptingTargetStudent.name}</strong>.
                     Your swap details are locked as: <strong>{form.currentHostel}</strong> → <strong>{form.desiredHostel}</strong>.
                   </span>
                 </div>
@@ -485,67 +475,39 @@ export default function Listings() {
                       {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                     </select>
                   </div>
-<<<<<<< HEAD
-                  <div>
-                    <label className="block text-xs text-white/50 mb-1.5">Current Hostel *</label>
-                    <select
-                      required
-                      disabled={!!acceptingTargetStudent}
-                      value={form.currentHostel}
-                      onChange={(e) => {
-                        const current = e.target.value;
-                        const desired = getCompatibleHostel(current);
-                        setForm({ ...form, currentHostel: current, desiredHostel: desired });
-                      }}
-                      className="select-field disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <option value="">Select Hostel</option>
-                      {HOSTELS.map(h => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs text-white/50 mb-1.5">Desired Hostel *</label>
-                    <select
-                      required
-                      disabled
-                      value={form.desiredHostel}
-                      onChange={(e) => setForm({ ...form, desiredHostel: e.target.value })}
-                      className="select-field disabled:opacity-70 disabled:cursor-not-allowed"
-                    >
-                      <option value="">Auto-selected</option>
-                      {HOSTELS.map(h => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                  </div>
-=======
                   {!isRoomPartnerPage && (
-                    <div>
-                      <label className="block text-xs text-white/50 mb-1.5">Current Hostel *</label>
-                      <select
-                        required
-                        disabled={!!acceptingTargetStudent}
-                        value={form.currentHostel}
-                        onChange={(e) => setForm({ ...form, currentHostel: e.target.value })}
-                        className="select-field disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <option value="">Select Hostel</option>
-                        {HOSTELS.map(h => <option key={h} value={h}>{h}</option>)}
-                      </select>
-                    </div>
-                  )}
-                  {!isRoomPartnerPage && (
-                    <div>
-                      <label className="block text-xs text-white/50 mb-1.5">Desired Hostel *</label>
-                      <select
-                        required
-                        disabled={!!acceptingTargetStudent}
-                        value={form.desiredHostel}
-                        onChange={(e) => setForm({ ...form, desiredHostel: e.target.value })}
-                        className="select-field disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <option value="">Select Hostel</option>
-                        {HOSTELS.map(h => <option key={h} value={h}>{h}</option>)}
-                      </select>
-                    </div>
+                    <>
+                      <div>
+                        <label className="block text-xs text-white/50 mb-1.5">Current Hostel *</label>
+                        <select
+                          required
+                          disabled={!!acceptingTargetStudent}
+                          value={form.currentHostel}
+                          onChange={(e) => {
+                            const current = e.target.value;
+                            const desired = getCompatibleHostel(current);
+                            setForm({ ...form, currentHostel: current, desiredHostel: desired });
+                          }}
+                          className="select-field disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <option value="">Select Hostel</option>
+                          {HOSTELS.map(h => <option key={h} value={h}>{h}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs text-white/50 mb-1.5">Desired Hostel *</label>
+                        <select
+                          required
+                          disabled
+                          value={form.desiredHostel}
+                          onChange={(e) => setForm({ ...form, desiredHostel: e.target.value })}
+                          className="select-field disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                          <option value="">Auto-selected</option>
+                          {HOSTELS.map(h => <option key={h} value={h}>{h}</option>)}
+                        </select>
+                      </div>
+                    </>
                   )}
                   {isRoomPartnerPage && (
                     <div className="col-span-2 space-y-3">
@@ -577,10 +539,14 @@ export default function Listings() {
                                 className="w-4 h-4 accent-blue-500"
                               />
                               <div className="flex items-start gap-3">
-                                <Building2 size={20} className={h === 'Ramanujan Bhawan' ? 'text-blue-400' : 'text-purple-400'} />
+                                <Building2 size={20} className={
+                                  h === 'Ramanujan Bhawan' ? 'text-purple-400' :
+                                  h === 'Ambedkar Bhawan' ? 'text-blue-400' :
+                                  h === 'Kasturba Bhawan' ? 'text-rose-400' : 'text-emerald-400'
+                                } />
                                 <div>
-                                  <p className="text-white/95 font-medium">{h === 'Ramanujan Bhawan' ? 'Ramanujan Hostel' : 'Ambedkar Hostel'}</p>
-                                  <p className="text-white/45 text-xs mt-0.5">Find a room partner in {h === 'Ramanujan Bhawan' ? 'Ramanujan Hostel' : 'Ambedkar Hostel'}</p>
+                                  <p className="text-white/95 font-medium">{h.replace(' Bhawan', ' Hostel')}</p>
+                                  <p className="text-white/45 text-xs mt-0.5">Find a room partner in {h.replace(' Bhawan', ' Hostel')}</p>
                                 </div>
                               </div>
                             </label>
@@ -633,7 +599,6 @@ export default function Listings() {
                       </div>
                     </div>
                   )}
->>>>>>> b2457db87b1c473c1b76014bbdd144d9ad87627f
                   <div className="col-span-2">
                     <label className="block text-xs text-white/50 mb-1.5">
                       {isRoomPartnerPage ? 'Mobile Number *' : 'Contact Number'}
